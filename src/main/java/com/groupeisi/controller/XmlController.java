@@ -1,6 +1,6 @@
-package com.groupeisi.xmlapi.controller;
+package com.groupeisi.controller;
 
-import com.groupeisi.xmlapi.service.XmlService;
+import com.groupeisi.service.XmlService;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
