@@ -87,4 +87,60 @@ public class XmlServiceTest {
         Exception e = assertThrows(Exception.class, () -> xmlService.deleteElementById("999"));
         assertEquals("Élément à supprimer non trouvé", e.getMessage());
     }
+
+
+    @Test
+    @Order(5)
+    void testAddElement() throws Exception {
+        // Sauvegarder un fichier de base
+        MockMultipartFile file = new MockMultipartFile(
+                "file", "test.xml", "application/xml", testXml.getBytes()
+        );
+        xmlService.saveXmlFile(file);
+
+        // Ajouter un nouvel élément XML
+        String newElement = "<element id=\"3\">Troisième</element>";
+        xmlService.addElement(newElement);
+
+        String content = xmlService.getXmlContent();
+        assertTrue(content.contains("Troisième"));
+        assertTrue(content.contains("id=\"3\""));
+    }
+
+
+    @Test
+    @Order(6)
+    void testGetXmlContent() throws Exception {
+        MockMultipartFile file = new MockMultipartFile(
+                "file", "test.xml", "application/xml", testXml.getBytes()
+        );
+        xmlService.saveXmlFile(file);
+
+        String content = xmlService.getXmlContent();
+
+        assertNotNull(content);
+        assertTrue(content.contains("Premier"));
+        assertTrue(content.contains("Deuxième"));
+    }
+
+    @Test
+    @Order(7)
+    void testUpdateElement() throws Exception {
+        MockMultipartFile file = new MockMultipartFile(
+                "file", "test.xml", "application/xml", testXml.getBytes()
+        );
+        xmlService.saveXmlFile(file);
+
+        // Modifier l’élément ayant id=1
+        String updatedElement = "<element id=\"1\">Modifié</element>";
+        xmlService.updateElement(updatedElement);
+
+        String content = xmlService.getXmlContent();
+        assertTrue(content.contains("Modifié"));
+        assertFalse(content.contains("Premier"));
+    }
+
+
+
+
 }
