@@ -16,7 +16,8 @@ public class XmlController {
         this.xmlService = xmlService;
     }
 
-    // 1. Upload fichier XML — bien indiquer que le endpoint consomme multipart/form-data
+    // 1. Upload fichier XML — bien indiquer que le endpoint consomme
+    // multipart/form-data
     @PostMapping(value = "/upload", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<String> uploadXml(@RequestParam("file") MultipartFile file) {
         try {
@@ -37,7 +38,6 @@ public class XmlController {
             return ResponseEntity.badRequest().body("Erreur de transformation : " + e.getMessage());
         }
     }
-
 
     // 3. Lire le contenu XML actuel
     @GetMapping(value = "/content", produces = MediaType.APPLICATION_XML_VALUE)

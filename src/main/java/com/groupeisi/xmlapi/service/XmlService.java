@@ -14,22 +14,27 @@ import javax.xml.transform.stream.StreamSource;
 import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathFactory;
+import static java.nio.charset.StandardCharsets.UTF_8;
+
 
 import java.io.*;
+import java.nio.charset.StandardCharsets;
+
+import static java.nio.charset.StandardCharsets.*;
 
 @Service
 public class XmlService {
 
-    private final File xmlFile = new File("uploaded.xml");  // stocke le fichier uploadé
+    private final File xmlFile = new File("uploaded.xml");
 
-    // 1. Sauvegarder fichier XML uploadé
+    // 1. Sauvegarder fichier XML uploadé avec encodage UTF-8
     public void saveXmlFile(MultipartFile file) throws IOException {
-        try (OutputStream os = new FileOutputStream(xmlFile)) {
-            os.write(file.getBytes());
+        try (OutputStreamWriter writer = new OutputStreamWriter(new FileOutputStream(xmlFile), UTF_8)) {
+            writer.write(new String(file.getBytes(), UTF_8));
         }
     }
 
-    // Charger XML en Document DOM
+    // Charger XML en Document DOM avec encodage UTF-8
     private Document loadXmlDocument() throws Exception {
         if (!xmlFile.exists()) {
             throw new FileNotFoundException("Fichier XML non trouvé.");
@@ -37,56 +42,50 @@ public class XmlService {
         DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
         factory.setNamespaceAware(true);
         DocumentBuilder builder = factory.newDocumentBuilder();
-        try (InputStream is = new FileInputStream(xmlFile)) {
+        try (InputStreamReader reader = new InputStreamReader(new FileInputStream(xmlFile), UTF_8)) {
+            InputSource is = new InputSource(reader);
+            is.setEncoding("UTF-8");
             return builder.parse(is);
         }
     }
 
-    // Sauvegarder Document DOM dans fichier XML
+    // Sauvegarder Document DOM dans fichier XML en UTF-8
     private void saveXmlDocument(Document doc) throws TransformerException, IOException {
         Transformer transformer = TransformerFactory.newInstance().newTransformer();
         transformer.setOutputProperty(OutputKeys.INDENT, "yes");
-        try (FileOutputStream fos = new FileOutputStream(xmlFile)) {
-            transformer.transform(new DOMSource(doc), new StreamResult(fos));
+        transformer.setOutputProperty(OutputKeys.ENCODING, "UTF-8");
+        try (OutputStreamWriter writer = new OutputStreamWriter(new FileOutputStream(xmlFile), UTF_8)) {
+            transformer.transform(new DOMSource(doc), new StreamResult(writer));
         }
     }
 
     // 2. Transformation XSLT sur le fichier XML
     public String transformXmlWithXslt() throws Exception {
-        // 1. Charger le document XML
         Document doc = loadXmlDocument();
 
-        // 2. Générer dynamiquement un contenu XSLT (exemple générique basé sur les balises enfants)
-        String xsltContent = """
-        <?xml version="1.0" encoding="UTF-8"?>
-        <xsl:stylesheet version="1.0"
-            xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
-          <xsl:output method="html" indent="yes"/>
-          <xsl:template match="/">
-            <html>
-              <body>
-                <h2>Contenu XML généré</h2>
-                <ul>
-                  <xsl:for-each select="*/*">
-                    <li>
-                      <xsl:for-each select="*">
-                        <b><xsl:value-of select="name()"/>:</b>
-                        <xsl:value-of select="."/>
-                        <br/>
-                      </xsl:for-each>
-                    </li>
-                  </xsl:for-each>
-                </ul>
-              </body>
-            </html>
-          </xsl:template>
-        </xsl:stylesheet>
-        """;
+        String xsltContent =
+                "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" +
+                        "<xsl:stylesheet version=\"1.0\"\n" +
+                        "    xmlns:xsl=\"http://www.w3.org/1999/XSL/Transform\">\n" +
+                        "  <xsl:output method=\"html\" indent=\"yes\" encoding=\"UTF-8\"/>\n" +
+                        "  <xsl:template match=\"/\">\n" +
+                        "    <html>\n" +
+                        "      <body>\n" +
+                        "        <h2>Contenu XML généré</h2>\n" +
+                        "        <ul>\n" +
+                        "          <xsl:for-each select=\"root/element\">\n" +
+                        "            <li><xsl:value-of select=\".\"/></li>\n" +
+                        "          </xsl:for-each>\n" +
+                        "        </ul>\n" +
+                        "      </body>\n" +
+                        "    </html>\n" +
+                        "  </xsl:template>\n" +
+                        "</xsl:stylesheet>";
 
-        // 3. Transformer via contenu XSLT dynamique
         TransformerFactory tf = TransformerFactory.newInstance();
         Source xslt = new StreamSource(new StringReader(xsltContent));
         Transformer transformer = tf.newTransformer(xslt);
+        transformer.setOutputProperty(OutputKeys.ENCODING, "UTF-8");
 
         StringWriter writer = new StringWriter();
         transformer.transform(new DOMSource(doc), new StreamResult(writer));
@@ -94,13 +93,13 @@ public class XmlService {
         return writer.toString();
     }
 
-
-    // 3. Obtenir contenu XML en String (formaté)
+    // 3. Obtenir contenu XML formaté en String UTF-8
     public String getXmlContent() throws Exception {
         Document doc = loadXmlDocument();
         StringWriter writer = new StringWriter();
         Transformer transformer = TransformerFactory.newInstance().newTransformer();
         transformer.setOutputProperty(OutputKeys.INDENT, "yes");
+        transformer.setOutputProperty(OutputKeys.ENCODING, "UTF-8");
         transformer.transform(new DOMSource(doc), new StreamResult(writer));
         return writer.toString();
     }
@@ -121,7 +120,7 @@ public class XmlService {
         saveXmlDocument(doc);
     }
 
-    // 5. Modifier élément XML (recherche par tag racine)
+    // 5. Modifier élément XML (par tag racine et id)
     public void updateElement(String updatedElementXml) throws Exception {
         Document doc = loadXmlDocument();
 
@@ -140,7 +139,6 @@ public class XmlService {
         }
 
         NodeList nodes = doc.getElementsByTagName(tagName);
-
         Element nodeToUpdate = null;
 
         for (int i = 0; i < nodes.getLength(); i++) {
@@ -163,7 +161,6 @@ public class XmlService {
         saveXmlDocument(doc);
     }
 
-
     // 6. Supprimer élément par id (XPath)
     public void deleteElementById(String id) throws Exception {
         Document doc = loadXmlDocument();
@@ -179,6 +176,5 @@ public class XmlService {
         nodeToDelete.getParentNode().removeChild(nodeToDelete);
         saveXmlDocument(doc);
     }
-
 
 }
