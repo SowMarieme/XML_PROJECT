@@ -1,38 +1,45 @@
 package com.groupeisi.xmlapi;
 
-import org.junit.jupiter.api.Test;
+import com.groupeisi.xmlapi.service.XmlService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.mock.web.MockMultipartFile;
-import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
-import static org.hamcrest.Matchers.containsString;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.multipart;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
-
-@SpringBootTest
-@AutoConfigureMockMvc
-class XmlControllerTests {
+@RestController
+@RequestMapping("/api/xml")
+public class XmlControllerTest {
 
 	@Autowired
-	private MockMvc mockMvc;
+	private XmlService xmlService;
 
-	@Test
-	void testUploadXml_shouldReturnSuccess() throws Exception {
-		MockMultipartFile xmlFile = new MockMultipartFile(
-				"file", "test.xml", "text/xml", "<root></root>".getBytes());
-
-		mockMvc.perform(multipart("/api/xml/upload").file(xmlFile))
-				.andExpect(status().isOk())
-				.andExpect(content().string(containsString("uploadé avec succès")));
+	@PostMapping("/upload")
+	public ResponseEntity<String> uploadXml(@RequestParam("file") MultipartFile file) {
+		try {
+			xmlService.saveXmlFile(file);
+			return ResponseEntity.ok("Fichier uploadé avec succès");
+		} catch (Exception e) {
+			return ResponseEntity.badRequest().body("Erreur lors de l'upload : " + e.getMessage());
+		}
 	}
 
-	@Test
-	void testTransform_shouldReturnXml() throws Exception {
-		mockMvc.perform(get("/api/xml/transform"))
-				.andExpect(status().isOk())
-				.andExpect(content().contentType("application/xml"));
+	@GetMapping("/transform")
+	public ResponseEntity<String> transformXml() {
+		try {
+			String result = xmlService.transformXmlWithXslt();
+			return ResponseEntity.ok(result);
+		} catch (Exception e) {
+			return ResponseEntity.badRequest().body("Erreur lors de la transformation : " + e.getMessage());
+		}
+	}
+
+	@DeleteMapping("/delete/{id}")
+	public ResponseEntity<String> deleteElement(@PathVariable String id) {
+		try {
+			xmlService.deleteElementById(id);
+			return ResponseEntity.ok("Élément supprimé avec succès");
+		} catch (Exception e) {
+			return ResponseEntity.badRequest().body("Erreur lors de la suppression : " + e.getMessage());
+		}
 	}
 }

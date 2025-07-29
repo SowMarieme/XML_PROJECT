@@ -27,6 +27,7 @@
 			<artifactId>spring-boot-starter-web</artifactId>
 		</dependency>
 
+
 		<!-- Springdoc OpenAPI UI -->
 		<dependency>
 			<groupId>org.springdoc</groupId>
@@ -52,6 +53,7 @@
 			<artifactId>jaxb-runtime</artifactId>
 			<version>4.0.0</version>
 		</dependency>
+
 
 		<!-- Tests -->
 		<dependency>
@@ -109,13 +111,7 @@
 							<backend>html</backend>
 							<doctype>book</doctype>
 						</configuration>
-						<dependencies>
-							<dependency>
-								<groupId>org.springframework.restdocs</groupId>
-								<artifactId>spring-restdocs-asciidoctor</artifactId>
-								<version>3.0.3</version>
-							</dependency>
-						</dependencies>
+
 					</execution>
 				</executions>
 			</plugin>
