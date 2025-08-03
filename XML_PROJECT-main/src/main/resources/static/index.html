@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Gestion XML - Interface CRUD Ultra Stylée</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap');
+
+        * {
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: #f0f0f5;
+            margin: 0; padding: 2rem;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+        }
+        main {
+            background: #1a1a2e;
+            border-radius: 20px;
+            max-width: 900px;
+            width: 100%;
+            padding: 2.5rem 3rem;
+            box-shadow: 0 0 40px rgba(102, 126, 234, 0.6);
+            animation: fadeInUp 0.8s ease forwards;
+        }
+        h1 {
+            text-align: center;
+            font-weight: 700;
+            font-size: 2.8rem;
+            margin-bottom: 2rem;
+            letter-spacing: 0.12em;
+            color: #f8f8ff;
+            text-shadow: 0 0 15px #8b79e0;
+        }
+
+        section {
+            background: #16213e;
+            padding: 1.6rem 2rem;
+            margin-bottom: 2rem;
+            border-radius: 15px;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.5);
+            position: relative;
+            overflow: hidden;
+            transition: box-shadow 0.3s ease;
+        }
+        section:hover {
+            box-shadow: 0 10px 40px #8b79e0;
+        }
+
+        h2 {
+            font-weight: 600;
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+            color: #a3a0fb;
+            text-shadow: 0 0 8px #756bf9;
+            border-left: 5px solid #8b79e0;
+            padding-left: 0.6rem;
+        }
+
+        label, small {
+            font-weight: 500;
+            color: #9a9cdf;
+            display: block;
+            margin-bottom: 0.35rem;
+        }
+
+        input[type="text"],
+        input[type="file"],
+        textarea {
+            width: 100%;
+            padding: 0.85rem 1rem;
+            font-family: monospace;
+            font-size: 1rem;
+            border-radius: 12px;
+            border: none;
+            outline: none;
+            background: #2e2e4d;
+            color: #eee;
+            box-shadow: inset 0 0 5px #3d3d6a;
+            transition: box-shadow 0.3s ease;
+            resize: vertical;
+        }
+        input[type="text"]:focus,
+        input[type="file"]:focus,
+        textarea:focus {
+            box-shadow: 0 0 12px #7e78ff;
+        }
+
+        button {
+            display: inline-block;
+            background: linear-gradient(45deg, #7e78ff, #a3a0fb);
+            border: none;
+            padding: 0.7rem 2.2rem;
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: white;
+            border-radius: 30px;
+            cursor: pointer;
+            box-shadow: 0 6px 15px rgba(124, 119, 255, 0.5);
+            transition: all 0.3s ease;
+            user-select: none;
+            letter-spacing: 0.05em;
+            margin-top: 0.8rem;
+            text-transform: uppercase;
+        }
+        button:hover {
+            box-shadow: 0 10px 30px #b2aaff;
+            transform: translateY(-4px) scale(1.05);
+        }
+        button:active {
+            transform: translateY(-1px) scale(1);
+            box-shadow: 0 6px 15px #7e78ff;
+        }
+
+        pre {
+            background: #222244;
+            padding: 1rem 1.3rem;
+            border-radius: 16px;
+            font-family: 'Fira Code', monospace, monospace;
+            font-size: 0.95rem;
+            max-height: 280px;
+            overflow-y: auto;
+            color: #dcdcff;
+            text-shadow: 0 0 2px #a3a0fb;
+        }
+
+        #transformedContent {
+            background: #28284c;
+            color: #e0e0ff;
+            border-radius: 16px;
+            padding: 1.3rem 1.6rem;
+            min-height: 130px;
+            box-shadow: inset 0 0 12px #7e78ff;
+            overflow-wrap: break-word;
+            transition: all 0.4s ease;
+        }
+
+        p.status {
+            margin-top: 0.5rem;
+            font-weight: 600;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            user-select: none;
+        }
+        p.status.visible {
+            opacity: 1;
+        }
+        p.status.success {
+            color: #5ff07f;
+            text-shadow: 0 0 8px #29c746;
+        }
+        p.status.error {
+            color: #ff586a;
+            text-shadow: 0 0 8px #c92f3f;
+        }
+
+        /* Loader animation */
+        .loader {
+            border: 4px solid rgba(255, 255, 255, 0.15);
+            border-top: 4px solid #8b79e0;
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            animation: spin 1s linear infinite;
+            margin: 1rem auto;
+        }
+
+        /* Animations */
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        @keyframes fadeInUp {
+            0% { opacity: 0; transform: translateY(30px); }
+            100% { opacity: 1; transform: translateY(0); }
+        }
+
+    </style>
+</head>
+<body>
+
+<main>
+    <h1>Gestion XML - Interface CRUD</h1>
+
+    <section>
+        <h2>1. Upload fichier XML</h2>
+        <input type="file" id="fileInput" accept=".xml" />
+        <button id="uploadBtn">Uploader</button>
+        <p id="uploadStatus" class="status"></p>
+    </section>
+
+    <section>
+        <h2>2. Voir le contenu XML actuel</h2>
+        <button id="contentBtn">Afficher le contenu XML</button>
+        <pre id="xmlContent">&lt;-- Contenu XML ici --&gt;</pre>
+    </section>
+
+    <section>
+        <h2>3. Transformer le XML en HTML</h2>
+        <button id="transformBtn">Voir transformation XSLT</button>
+        <div id="transformedContent"></div>
+    </section>
+
+    <section>
+        <h2>4. Ajouter un élément XML</h2>
+        <small>Entrez l'élément XML à ajouter (ex: &lt;person&gt;&lt;id&gt;10&lt;/id&gt;&lt;name&gt;Fatou&lt;/name&gt;&lt;/person&gt;)</small>
+        <textarea id="addElementXml" rows="5" placeholder="Votre XML ici..."></textarea>
+        <button id="addBtn">Ajouter</button>
+        <p id="addStatus" class="status"></p>
+    </section>
+
+    <section>
+        <h2>5. Modifier un élément XML</h2>
+        <small>Entrez l'élément XML modifié avec l'attribut <code>id</code> (ex: &lt;person id=&quot;10&quot;&gt;&lt;name&gt;Fatou B.&lt;/name&gt;&lt;/person&gt;)</small>
+        <textarea id="updateElementXml" rows="5" placeholder="Votre XML modifié ici..."></textarea>
+        <button id="updateBtn">Modifier</button>
+        <p id="updateStatus" class="status"></p>
+    </section>
+
+    <section>
+        <h2>6. Supprimer un élément XML par ID</h2>
+        <input type="text" id="deleteId" placeholder="ID de l'élément à supprimer" />
+        <button id="deleteBtn">Supprimer</button>
+        <p id="deleteStatus" class="status"></p>
+    </section>
+</main>
+
+<script>
+    const baseUrl = '/api/xml';
+
+    function showStatus(id, message, success = true) {
+        const el = document.getElementById(id);
+        el.textContent = message;
+        el.className = 'status visible ' + (success ? 'success' : 'error');
+        // Masquer après 4 secondes
+        setTimeout(() => { el.className = 'status'; }, 4000);
+    }
+
+    function clearInput(id) {
+        const el = document.getElementById(id);
+        if(el.type === 'file') {
+            el.value = '';
+        } else if(el.tagName === 'TEXTAREA' || el.tagName === 'INPUT') {
+            el.value = '';
+        }
+    }
+
+    async function uploadXml() {
+        const fileInput = document.getElementById('fileInput');
+        if (!fileInput.files.length) {
+            showStatus('uploadStatus', 'Merci de choisir un fichier XML.', false);
+            return;
+        }
+        const formData = new FormData();
+        formData.append('file', fileInput.files[0]);
+        showStatus('uploadStatus', 'Upload en cours...', true);
+
+        try {
+            const res = await fetch(baseUrl + '/upload', {
+                method: 'POST',
+                body: formData
+            });
+            const text = await res.text();
+            showStatus('uploadStatus', text, res.ok);
+            if(res.ok) clearInput('fileInput');
+        } catch (e) {
+            showStatus('uploadStatus', 'Erreur lors de l\'upload : ' + e.message, false);
+        }
+    }
+
+    async function getXmlContent() {
+        const pre = document.getElementById('xmlContent');
+        pre.textContent = 'Chargement...';
+        try {
+            const res = await fetch(baseUrl + '/content', {
+                headers: { Accept: 'application/xml' }
+            });
+            const text = await res.text();
+            pre.textContent = text;
+        } catch(e) {
+            pre.textContent = 'Erreur lors de la lecture : ' + e.message;
+        }
+    }
+
+    async function transformXml() {
+        const container = document.getElementById('transformedContent');
+        container.innerHTML = `<div class="loader"></div>`;
+
+        try {
+            const res = await fetch(baseUrl + '/transform', {
+                headers: { Accept: 'text/html' }
+            });
+            const html = await res.text();
+            container.innerHTML = html;
+        } catch(e) {
+            container.innerHTML = 'Erreur lors de la transformation : ' + e.message;
+        }
+    }
+
+    async function addElement() {
+        const xml = document.getElementById('addElementXml').value.trim();
+        if(!xml) {
+            showStatus('addStatus', 'Le XML à ajouter est vide.', false);
+            return;
+        }
+        showStatus('addStatus', 'Ajout en cours...', true);
+
+        try {
+            const res = await fetch(baseUrl + '/add', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/xml' },
+                body: xml
+            });
+            const text = await res.text();
+            showStatus('addStatus', text, res.ok);
+            if(res.ok) clearInput('addElementXml');
+        } catch(e) {
+            showStatus('addStatus', 'Erreur lors de l\'ajout : ' + e.message, false);
+        }
+    }
+
+    async function updateElement() {
+        const xml = document.getElementById('updateElementXml').value.trim();
+        if(!xml) {
+            showStatus('updateStatus', 'Le XML modifié est vide.', false);
+            return;
+        }
+        showStatus('updateStatus', 'Modification en cours...', true);
+
+        try {
+            const res = await fetch(baseUrl + '/update', {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/xml' },
+                body: xml
+            });
+            const text = await res.text();
+            showStatus('updateStatus', text, res.ok);
+            if(res.ok) clearInput('updateElementXml');
+        } catch(e) {
+            showStatus('updateStatus', 'Erreur lors de la modification : ' + e.message, false);
+        }
+    }
+
+    async function deleteElement() {
+        const id = document.getElementById('deleteId').value.trim();
+        if(!id) {
+            showStatus('deleteStatus', 'Merci de saisir un ID.', false);
+            return;
+        }
+        showStatus('deleteStatus', 'Suppression en cours...', true);
+
+        try {
+            const res = await fetch(baseUrl + '/delete/' + encodeURIComponent(id), {
+                method: 'DELETE'
+            });
+            const text = await res.text();
+            showStatus('deleteStatus', text, res.ok);
+            if(res.ok) clearInput('deleteId');
+        } catch(e) {
+            showStatus('deleteStatus', 'Erreur lors de la suppression : ' + e.message, false);
+        }
+    }
+
+    document.getElementById('uploadBtn').addEventListener('click', uploadXml);
+    document.getElementById('contentBtn').addEventListener('click', getXmlContent);
+    document.getElementById('transformBtn').addEventListener('click', transformXml);
+    document.getElementById('addBtn').addEventListener('click', addElement);
+    document.getElementById('updateBtn').addEventListener('click', updateElement);
+    document.getElementById('deleteBtn').addEventListener('click', deleteElement);
+</script>
+
+</body>
+</html>
