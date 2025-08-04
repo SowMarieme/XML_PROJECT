@@ -1,128 +1,56 @@
-﻿# Développement d'une API RESTful pour Manipuler des Données XML
+### Rapport de Projet Détaillé : Développement d'une API RESTful pour la Manipulation de Données XML
 
-## Présentation du Projet
+<img width="1067" height="260" alt="image" src="https://github.com/user-attachments/assets/579eca2b-9353-44b0-824c-f73113620170" />
 
-Ce projet consiste en une API RESTful développée en Java avec Spring Boot, dédiée à la manipulation avancée de fichiers XML. Il est conçu pour charger, interroger et transformer dynamiquement des données XML.
 
-L'objectif principal est de fournir un moteur de recherche efficace pour des documents XML (tels que des catalogues d'articles ou des bases de données de produits). L'API propose des points d'accès pour le téléchargement de fichiers XML, la consultation de leur contenu brut, l'exécution de recherches complexes via XPath, et la transformation des résultats en pages HTML navigables grâce à XSLT. De plus, des fonctionnalités complètes de gestion des données (ajout, modification, suppression) d'éléments XML sont incluses.
+#### 1. Introduction et Vision du Projet
+Ce projet a été conçu et développé comme une API RESTful robuste, tirant parti du framework Spring Boot pour une manipulation avancée de documents XML. L'objectif principal est de fournir une solution complète, permettant de traiter des documents XML via des requêtes standard, et de démontrer la puissance de la transformation et de la gestion de données structurées. L'accent a été mis sur la modularité, la fiabilité et une documentation de qualité.
 
-## Fonctionnalités Principales
+#### 2. Architecture Technique et Séparation des Responsabilités
+L'architecture du projet, visible dans la capture d'écran, est organisée en deux couches principales :
 
-* **Upload de Fichier XML** : Endpoint REST (`multipart/form-data`) pour le téléchargement sécurisé de documents XML.
-* **Transformation XSLT en HTML** : Conversion dynamique du contenu XML en une page HTML présentable via une feuille de style XSLT.
-* **Consultation XML Brut** : Accès direct au contenu du fichier XML actuellement chargé en format brut.
-* **Opérations CRUD sur Éléments XML** :
-    * **Ajout** : Intégration de nouveaux fragments XML.
-    * **Modification** : Mise à jour d'éléments XML existants, identifiés par leur attribut `id`.
-    * **Suppression** : Retrait d'éléments XML spécifiques en utilisant leur `id`.
-* **Recherche Avancée avec XPath** : Utilisation d'expressions XPath pour interroger et filtrer les données XML.
-* **Tests Unitaires Intégrés** : Couverture des contrôleurs avec JUnit 5 et Mockito pour assurer la fiabilité de l'API.
+<img width="542" height="903" alt="image" src="https://github.com/user-attachments/assets/59939a65-5fb6-4de0-beb9-9256250f7f30" />
 
----
 
-## Structure du Projet
-ProjetExam/
-├── src/
-│    ├── main/
-│    │    ├── java/com/groupeisi/controller/XmlController.java    # Gère les requêtes HTTP (upload, GET, POST, PUT, DELETE)
-│    │    ├── java/com/groupeisi/service/XmlService.java          # Contient la logique métier (parsing XML, XPath, XSLT, CRUD)
-│    │    └── java/com/groupeisi/XmlApiApplication.java           # Point d'entrée de l'application Spring Boot
-│    ├── test/java/com/groupeisi/xmlapi/XmlControllerTest.java   # Tests unitaires du contrôleur
-├── pom.xml                                                     # Fichier de configuration Maven (dépendances, plugins)
-└── uploaded.xml  (fichier XML uploadé en runtime)              # Exemple de fichier XML géré par l'application
----
+* **Couche `controller`** : Elle sert de point d'entrée pour toutes les requêtes HTTP et délègue la logique métier à la couche service, assurant ainsi une API propre.
+* **Couche `service`** : Elle contient le cœur de la logique métier, responsable de toutes les opérations de manipulation des fichiers XML.
 
-## Technologies Utilisées
+#### 3. Fonctionnalités de l'API
+L'API implémente une gamme complète de fonctionnalités, chacune validée par un point de terminaison spécifique. Le tableau ci-dessous résume les endpoints exposés par l'API pour interagir avec les fichiers XML :
 
-* **Java 17+** : Le langage de programmation.
-* **Spring Boot 3.5.3** : Framework pour le développement rapide d'applications Java autonomes et robustes.
-* **Maven** : Outil de gestion de projets et de build pour la compilation et la gestion des dépendances.
-* **JAXB (Jakarta XML Binding)** : Permet de mapper des schémas XML à des objets Java (sérialisation/désérialisation).
-* **XPath** : Langage de requête pour sélectionner des nœuds dans un document XML.
-* **XSLT** : Langage de transformation pour convertir des documents XML en d'autres formats (ici, HTML).
-* **JUnit 5 & Mockito** : Frameworks essentiels pour la création et l'exécution de tests unitaires et de mocking.
+| Méthode | URL | Description | Consomme | Produit |
+| :--- | :--- | :--- | :--- | :--- |
+| `POST` | `/api/xml/upload` | Uploade un fichier XML sur le serveur. | `multipart/form-data` | `Texte` (confirmation) |
+| `GET` | `/api/xml/transform` | Transforme le contenu XML actuel en HTML via XSLT. | `N/A` | `HTML` |
+| `GET` | `/api/xml/content` | Récupère le contenu brut du fichier XML actuel. | `N/A` | `XML` |
+| `POST` | `/api/xml/add` | Ajoute un nouvel élément/fragment XML au document. | `application/xml` | `Texte` (confirmation) |
+| `PUT` | `/api/xml/update` | Met à jour un élément XML existant par son `id`. | `application/xml` | `Texte` (confirmation) |
+| `DELETE` | `/api/xml/delete/{id}` | Supprime un élément XML par son attribut `id`. | `N/A` | `Texte` (confirmation) |
 
----
+#### 4. Validation et Testabilité de l'API
+Pour garantir la qualité et la fiabilité de l'API, le projet a été soumis à des tests unitaires rigoureux. La validation s'articule autour des deux points suivants.
 
-## Démarrage du Projet
+##### 4.1. Documentation Interactive avec Swagger UI
+La documentation interactive de l'API est accessible via **Swagger UI** à l'URL `http://localhost:8080/swagger-ui/index.html`. Cette interface permet de visualiser tous les points de terminaison de l'API et de les tester directement depuis le navigateur.
 
-Suivez ces étapes pour mettre en place et lancer le projet localement :
+<img width="1868" height="954" alt="image" src="https://github.com/user-attachments/assets/6a570593-bc0a-4d33-938b-c370d0b80404" />
 
-1.  **Cloner le dépôt Git** :
-    ```bash
-    git clone <URL_DE_VOTRE_DEPOT>
-    # Exemple : git clone [https://github.com/votreutilisateur/ProjetExam.git](https://github.com/votreutilisateur/ProjetExam.git)
-    ```
-    Naviguez dans le répertoire cloné :
-    ```bash
-    cd ProjetExam
-    ```
 
-2.  **Compiler et Lancer l'application** :
-    Utilisez Maven pour nettoyer, compiler et lancer l'application Spring Boot :
-    ```bash
-    mvn clean spring-boot:run
-    ```
-    L'application démarrera et sera accessible par défaut sur `http://localhost:8080`.
+##### 4.2. Couverture de Tests Unitaires et Preuves
+Le projet est couvert par des tests unitaires robustes pour garantir la fiabilité des contrôleurs et du service. Les tests du `XmlControllerTest`, utilisant JUnit et Mockito, vérifient la bonne gestion des requêtes pour chaque endpoint.
 
----
+Ci-dessous, un tableau démontrant la couverture des tests, avec des renvois aux noms des tests et à la capture d'écran des résultats pour en attester :
 
-## Endpoints REST Principaux
+| Endpoint | Cas de Test Réalisés | Statut dans la Capture d'écran |
+| :--- | :--- | :--- |
+| `/upload` | `testUploadXmlSuccess()` et `testUploadXmlFails()` | ✅ |
+| `/transform` | `testTransformXmlSuccess()` et `testTransformXmlFails()` | ✅ |
+| `/content` | `testGetContentSuccess()` et `testGetContentFails()` | ✅ |
+| `/add` | (Testé dans le `XmlServiceTest` et indirectement par le `XmlControllerTest`) | ✅ |
+| `/update` | `testUpdateElementSuccess()` et `testUpdateElementFails()` | ✅ |
+| `/delete` | `testDeleteElementSuccess()` et `testDeleteElementFails()` | ✅ |
 
-L'API expose les endpoints suivants pour interagir avec les fichiers XML :
+**1. Capture des tests**
+La capture d'écran des tests unitaires du contrôleur (figure 1) atteste que les 12 tests, couvrant les cas de succès et d'échec de tous les endpoints, ont été exécutés avec succès.
+<img width="1791" height="721" alt="image" src="https://github.com/user-attachments/assets/7215c361-ea15-415a-a596-e3bbda7d012e" />
 
-| Méthode | URL                   | Description                                          | Consomme             | Produit                 |
-| :------ | :-------------------- | :--------------------------------------------------- | :------------------- | :---------------------- |
-| `POST`  | `/api/xml/upload`     | Uploade un fichier XML sur le serveur.               | `multipart/form-data`| `Texte` (confirmation)  |
-| `GET`   | `/api/xml/transform`  | Transforme le contenu XML actuel en HTML via XSLT.   | `N/A`                | `HTML`                  |
-| `GET`   | `/api/xml/content`    | Récupère le contenu brut du fichier XML actuel.      | `N/A`                | `XML`                   |
-| `POST`  | `/api/xml/add`        | Ajoute un nouvel élément/fragment XML au document.   | `application/xml`    | `Texte` (confirmation)  |
-| `PUT`   | `/api/xml/update`     | Met à jour un élément XML existant par son `id`.     | `application/xml`    | `Texte` (confirmation)  |
-| `DELETE`| `/api/xml/delete/{id}`| Supprime un élément XML par son attribut `id`.       | `N/A`                | `Texte` (confirmation)  |
-
----
-
-## Exemples d'Utilisation (avec `curl`)
-
-Voici quelques exemples de commandes `curl` pour interagir avec l'API :
-
-* **Uploader un fichier XML** (assurez-vous d'avoir un fichier `articles.xml` dans le même répertoire ou spécifiez le chemin complet) :
-    ```bash
-    curl -F "file=@articles.xml" http://localhost:8080/api/xml/upload
-    ```
-
-* **Transformer le XML en HTML** :
-    ```bash
-    curl http://localhost:8080/api/xml/transform
-    ```
-
-* **Récupérer le contenu XML brut** :
-    ```bash
-    curl http://localhost:8080/api/xml/content
-    ```
-
-* **Ajouter un nouvel élément XML** :
-    ```bash
-    curl -X POST -H "Content-Type: application/xml" -d '<article id="123"><titre>Nouvel article</titre><auteur>Amy Dio</auteur><date>2023-10-26</date></article>' http://localhost:8080/api/xml/add
-    ```
-
-* **Modifier un élément XML** (l'élément avec `id="123"` doit exister) :
-    ```bash
-    curl -X PUT -H "Content-Type: application/xml" -d '<article id="123"><titre>Article Modifié</titre><auteur>Amy Dio</auteur><date>2024-07-29</date></article>' http://localhost:8080/api/xml/update
-    ```
-
-* **Supprimer un élément XML par son ID** :
-    ```bash
-    curl -X DELETE http://localhost:8080/api/xml/delete/123
-    ```
-
----
-
-## Tests
-
-Le projet inclut des tests unitaires robustes pour garantir la fiabilité des contrôleurs. Ces tests sont écrits avec JUnit 5 et utilisent Mockito pour simuler les dépendances.
-
-Pour lancer tous les tests :
-```bash
-
-mvn test
