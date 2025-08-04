@@ -1,5 +1,6 @@
-package com.groupeisi.xmlapi.service;
+package com.groupeisi.xmlapi.junit;
 
+import com.groupeisi.xmlapi.service.XmlService;
 import org.junit.jupiter.api.*;
 import org.springframework.mock.web.MockMultipartFile;
 
