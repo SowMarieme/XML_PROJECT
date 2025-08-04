@@ -50,6 +50,27 @@ Ci-dessous, un tableau démontrant la couverture des tests, avec des renvois aux
 | `/update` | `testUpdateElementSuccess()` et `testUpdateElementFails()` | ✅ |
 | `/delete` | `testDeleteElementSuccess()` et `testDeleteElementFails()` | ✅ |
 
+### Tests unitaires du `XmlController` avec JUnit et Mockito
+
+Ce fichier de tests (`XmlControllerTest`) garantit la fiabilité des endpoints de l'API REST de gestion XML. Il utilise le framework **Mockito** pour simuler le comportement du `XmlService`, ce qui permet de tester la couche contrôleur de manière isolée.
+
+-MOCKITO
+
+Chaque fonctionnalité du CRUD (Create, Read, Update, Delete) est couverte, avec des tests pour les scénarios de succès et d'échec :
+* **`upload`** : Envoi d'un fichier XML.
+* **`transform`** : Transformation du XML en HTML via XSLT.
+* **`add`** : Ajout d'un nouvel élément XML.
+* **`content`** : Récupération du contenu XML.
+* **`update`** : Modification d'un élément XML existant.
+* **`delete`** : Suppression d'un élément par ID.
+
+<img width="744" height="499" alt="image" src="https://github.com/user-attachments/assets/f0b070ca-ba8a-475a-9e33-caf69e604c3d" />
+
+-JUNIT
+<img width="743" height="371" alt="image" src="https://github.com/user-attachments/assets/a2910d8f-c6aa-4db2-b8cd-6c40a9a21e97" />
+
+
+
 **1. Capture des tests**
 La capture d'écran des tests unitaires du contrôleur (figure 1) atteste que les 12 tests, couvrant les cas de succès et d'échec de tous les endpoints, ont été exécutés avec succès.
 <img width="1891" height="990" alt="image" src="https://github.com/user-attachments/assets/8d8a3810-4e73-4cfd-b466-c7477c6653fb" />
@@ -63,6 +84,7 @@ La capture d'écran des tests unitaires du contrôleur (figure 1) atteste que le
 <img width="1012" height="422" alt="image" src="https://github.com/user-attachments/assets/c9fc3bf3-5fd1-4fc4-b986-b8f83ca630eb" />
 -Supression 
 <img width="1092" height="353" alt="image" src="https://github.com/user-attachments/assets/c6ac8165-b24b-407a-aca8-b23878ca392b" />
+
 
 
 
