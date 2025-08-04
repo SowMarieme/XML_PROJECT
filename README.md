@@ -52,5 +52,22 @@ Ci-dessous, un tableau démontrant la couverture des tests, avec des renvois aux
 
 **1. Capture des tests**
 La capture d'écran des tests unitaires du contrôleur (figure 1) atteste que les 12 tests, couvrant les cas de succès et d'échec de tous les endpoints, ont été exécutés avec succès.
-<img width="1791" height="721" alt="image" src="https://github.com/user-attachments/assets/7215c361-ea15-415a-a596-e3bbda7d012e" />
+<img width="1891" height="990" alt="image" src="https://github.com/user-attachments/assets/8d8a3810-4e73-4cfd-b466-c7477c6653fb" />
+-Uploader un fichier nommé & afficher son contenu
+<img width="1038" height="913" alt="image" src="https://github.com/user-attachments/assets/3790bcbd-7f64-47b4-8202-19d05d579d3b" />
+-Transformation 
+<img width="989" height="787" alt="image" src="https://github.com/user-attachments/assets/dfd6e579-9055-4d98-86f0-823635416237" />
+-Ajout 
+<img width="1033" height="459" alt="image" src="https://github.com/user-attachments/assets/35312955-4469-45fa-a95c-edb456c724c7" />
+-MIS A JOUR 
+<img width="1012" height="422" alt="image" src="https://github.com/user-attachments/assets/c9fc3bf3-5fd1-4fc4-b986-b8f83ca630eb" />
+-Supression 
+<img width="1092" height="353" alt="image" src="https://github.com/user-attachments/assets/c6ac8165-b24b-407a-aca8-b23878ca392b" />
+
+
+
+
+
+
+
 
